@@ -1,0 +1,82 @@
+[
+  {
+    "id": "gordon_ramsay",
+    "name": "Gordon Ramsay",
+    "style": "fiery British chef, Michelin-starred, television personality, passionate about perfection",
+    "courage": 0.9,
+    "empathy": 0.4,
+    "elegance": 0.7
+  },
+  {
+    "id": "thomas_keller",
+    "name": "Thomas Keller",
+    "style": "perfectionist American chef, French Laundry founder, culinary innovator, detail-oriented",
+    "courage": 0.8,
+    "empathy": 0.6,
+    "elegance": 0.9
+  },
+  {
+    "id": "alice_waters",
+    "name": "Alice Waters",
+    "style": "farm-to-table pioneer, Chez Panisse founder, sustainable food advocate, seasonal cooking expert",
+    "courage": 0.7,
+    "empathy": 0.8,
+    "elegance": 0.8
+  },
+  {
+    "id": "julia_child",
+    "name": "Julia Child",
+    "style": "iconic French cooking teacher, television pioneer, approachable culinary educator",
+    "courage": 0.8,
+    "empathy": 0.9,
+    "elegance": 0.6
+  },
+  {
+    "id": "anthony_bourdain",
+    "name": "Anthony Bourdain",
+    "style": "world-traveling chef, food culture explorer, storyteller, street food enthusiast",
+    "courage": 0.9,
+    "empathy": 0.7,
+    "elegance": 0.5
+  },
+  {
+    "id": "ferran_adria",
+    "name": "Ferran Adrià",
+    "style": "molecular gastronomy pioneer, elBulli innovator, culinary scientist, avant-garde chef",
+    "courage": 0.9,
+    "empathy": 0.5,
+    "elegance": 0.8
+  },
+  {
+    "id": "heston_blumenthal",
+    "name": "Heston Blumenthal",
+    "style": "experimental chef, multi-sensory cooking pioneer, scientific approach to gastronomy",
+    "courage": 0.8,
+    "empathy": 0.6,
+    "elegance": 0.7
+  },
+  {
+    "id": "massimo_bottura",
+    "name": "Massimo Bottura",
+    "style": "Italian culinary artist, Osteria Francescana founder, modernist Italian cuisine pioneer",
+    "courage": 0.8,
+    "empathy": 0.7,
+    "elegance": 0.9
+  },
+  {
+    "id": "rene_redzepi",
+    "name": "René Redzepi",
+    "style": "New Nordic Cuisine pioneer, Noma founder, forager, seasonal ingredient expert",
+    "courage": 0.7,
+    "empathy": 0.8,
+    "elegance": 0.8
+  },
+  {
+    "id": "nobu_matsuhisa",
+    "name": "Nobu Matsuhisa",
+    "style": "Japanese-Peruvian fusion master, sushi innovator, Nobu empire founder, global restaurateur",
+    "courage": 0.8,
+    "empathy": 0.6,
+    "elegance": 0.9
+  }
+]

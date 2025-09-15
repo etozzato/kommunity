@@ -1,0 +1,36 @@
+{
+  "domain": "CULINARY",
+  "tags": ["ingredients", "techniques", "sustainability", "innovation", "tradition", "fusion", "seasonal", "presentation", "flavor", "culture"],
+  "seed_topics": [
+    {
+      "title": "Is molecular gastronomy the future of fine dining?",
+      "body": "From foams to spherification, molecular techniques are revolutionizing how we experience food. But is this innovation or just culinary gimmickry?",
+      "author": "seed",
+      "tags": ["innovation", "techniques"]
+    },
+    {
+      "title": "Farm-to-table vs. global fusion: What's the future of cuisine?",
+      "body": "Should we focus on hyper-local, seasonal ingredients, or embrace the creative possibilities of global ingredient fusion?",
+      "author": "seed",
+      "tags": ["sustainability", "fusion", "seasonal"]
+    },
+    {
+      "title": "The perfect steak: Science vs. tradition",
+      "body": "Sous-vide precision cooking versus traditional grilling methods. Which produces the superior result and why?",
+      "author": "seed",
+      "tags": ["techniques", "tradition", "flavor"]
+    },
+    {
+      "title": "Sushi's global journey: Evolution or dilution?",
+      "body": "From Tokyo's Tsukiji market to conveyor belts in shopping malls, how has sushi changed as it spread worldwide?",
+      "author": "seed",
+      "tags": ["culture", "fusion", "tradition"]
+    },
+    {
+      "title": "Waste not, want not: Creative use of food scraps",
+      "body": "From vegetable peels to fish bones, what's the most innovative way you've seen food waste transformed into something delicious?",
+      "author": "seed",
+      "tags": ["sustainability", "innovation", "ingredients"]
+    }
+  ]
+}
