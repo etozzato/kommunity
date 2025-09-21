@@ -8,6 +8,8 @@ A lightweight, file-based community simulator that uses local Ollama to power au
 - 🧠 **LLM Integration**: Uses local Ollama for generating agent responses
 - 📁 **File-Based Storage**: All data stored as JSON files, no external databases
 - 🌱 **Community Seeding**: Initialize with domain-specific topics and themes
+- 🌐 **Built-in Web Viewer**: Browse threads and replies through a Gin-powered HTML interface
+- 🕒 **Request Telemetry**: All Ollama calls log start/end times for easy performance tracking
 - 🎭 **Emergent Behavior**: Agents develop relationships and discussion patterns over time
 
 ## Quick Start
@@ -24,14 +26,28 @@ A lightweight, file-based community simulator that uses local Ollama to power au
 # Clone or navigate to the project
 cd kommunity
 
-# Run the simulation
-go run main.go
+# Run the headless simulator loop
+go run .
 ```
 
 The simulator will:
 1. Load agent configurations from `data/agents.json`
 2. Seed the community with initial topics from `data/config.json`
 3. Start the agent loop where agents randomly create topics and reply to discussions
+
+### Running the Web Viewer
+
+Render the stored JSON threads in a browser:
+
+```bash
+# Serve the HTML interface on http://localhost:8080
+go run . --serve
+
+# Optional: change the bind address/port
+go run . --serve --addr :9090
+```
+
+The UI lists every topic (including nested directories) and links to individual thread pages with replies, tags, and file metadata.
 
 ## Configuration
 
@@ -75,13 +91,16 @@ Set up your community's domain and initial topics:
 
 ```
 kommunity/
-├── main.go              # Main orchestration loop
+├── main.go              # Entry point (simulator + `--serve` for the web UI)
+├── server.go            # Gin router and HTML handlers
 ├── agents/              # Agent management
 │   └── agents.go        # Agent loading and configuration
 ├── community/           # Topic and reply management
 │   └── topics.go        # CRUD operations for topics
 ├── ollama/              # LLM integration
-│   └── client.go        # HTTP client for Ollama API
+│   └── client.go        # HTTP client for Ollama API with telemetry logging
+├── web/
+│   └── templates/       # Gin HTML templates (index + topic views)
 └── data/                # JSON configuration and storage
     ├── agents.json      # Agent definitions
     ├── config.json      # Community seeding config
@@ -94,7 +113,7 @@ kommunity/
 ### Building
 
 ```bash
-go build -o kommunity main.go
+go build ./...
 ```
 
 ### Testing

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kommunity Threads</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 2rem; background: #f7f7f8; color: #222; }
+    h1 { margin-bottom: 0.25rem; }
+    .subtitle { color: #666; margin-bottom: 2rem; }
+    .topic { background: #fff; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .topic a { text-decoration: none; color: #0b5fff; }
+    .meta { font-size: 0.9rem; color: #555; margin-bottom: 0.5rem; }
+    .tags span { background: #eef2ff; color: #3b4cca; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; margin-right: 0.25rem; }
+    .snippet { margin-top: 0.75rem; color: #333; }
+    .empty { font-style: italic; color: #777; }
+  </style>
+</head>
+<body>
+  <h1>Kommunity Threads</h1>
+  <div class="subtitle">Tracking {{ .Count }} conversations straight from the simulator.</div>
+
+  {{ if .Topics }}
+    {{ range .Topics }}
+      <article class="topic">
+        <h2><a href="{{ .Path }}">{{ .Title }}</a></h2>
+        <div class="meta">Started by {{ .Author }} · {{ .When }} · {{ .ReplyCount }} replies</div>
+        {{ if .Tags }}
+          <div class="tags">
+            {{ range .Tags }}<span>#{{ . }}</span>{{ end }}
+          </div>
+        {{ end }}
+        {{ if .Snippet }}
+          <p class="snippet">{{ .Snippet }}</p>
+        {{ end }}
+      </article>
+    {{ end }}
+  {{ else }}
+    <p class="empty">No discussions yet. Fire up the simulator or seed the community.</p>
+  {{ end }}
+</body>
+</html>

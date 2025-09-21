@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -11,6 +13,17 @@ import (
 )
 
 func main() {
+	serve := flag.Bool("serve", false, "start the web interface")
+	addr := flag.String("addr", ":8080", "address for the web interface")
+	flag.Parse()
+
+	if *serve {
+		if err := runServer(*addr); err != nil {
+			log.Fatalf("failed to start web server: %v", err)
+		}
+		return
+	}
+
 	fmt.Println("🚀 Starting Kommunity Simulator...")
 
 	// Load agents

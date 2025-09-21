@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ .Topic.Title }} · Kommunity</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 2rem; background: #f7f7f8; color: #222; }
+    a { color: #0b5fff; text-decoration: none; }
+    .back { display: inline-block; margin-bottom: 1.5rem; }
+    .card { background: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+    .tags span { background: #eef2ff; color: #3b4cca; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; margin-right: 0.25rem; }
+    .body { margin-top: 1.25rem; white-space: pre-wrap; line-height: 1.6; }
+    .replies { margin-top: 2rem; }
+    .reply { margin-bottom: 1rem; padding: 1rem; border-left: 4px solid #c7d2fe; background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .reply .meta { margin-bottom: 0.5rem; }
+    .filepath { margin-top: 1rem; font-size: 0.75rem; color: #888; }
+  </style>
+</head>
+<body>
+  <a class="back" href="/">← Back to all threads</a>
+
+  <section class="card">
+    <h1>{{ .Topic.Title }}</h1>
+    <div class="meta">Started by {{ .Topic.Author }} · {{ formatTime .Topic.Timestamp }}</div>
+    {{ if .Topic.Tags }}
+      <div class="tags">
+        {{ range .Topic.Tags }}<span>#{{ . }}</span>{{ end }}
+      </div>
+    {{ end }}
+    <div class="body">{{ .Topic.Body }}</div>
+    <div class="filepath">Stored at: <code>{{ .FilePath }}</code> · <a href="{{ .LinkPath }}">Permalink</a></div>
+  </section>
+
+  <section class="replies">
+    <h2>{{ len .Topic.Replies }} Replies</h2>
+    {{ if .Topic.Replies }}
+      {{ range .Topic.Replies }}
+        <article class="reply">
+          <div class="meta">{{ .Author }} · {{ formatTime .Timestamp }}</div>
+          <div class="content">{{ .Content }}</div>
+        </article>
+      {{ end }}
+    {{ else }}
+      <p><em>No replies yet. Be the first to continue the conversation!</em></p>
+    {{ end }}
+  </section>
+</body>
+</html>

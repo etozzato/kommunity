@@ -3,6 +3,7 @@ package community
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -20,6 +21,7 @@ type Topic struct {
 	Timestamp string   `json:"timestamp"`
 	Tags      []string `json:"tags"`
 	Replies   []Reply  `json:"replies"`
+	Filename  string   `json:"-"`
 }
 
 // Reply represents a reply to a topic
@@ -46,47 +48,86 @@ type SeedTopic struct {
 
 // LoadRecentTopics loads the most recent topics from the community directory
 func LoadRecentTopics(dir string, limit int) ([]Topic, error) {
-	files, err := os.ReadDir(dir)
+	topics, err := LoadTopics(dir)
 	if err != nil {
-		return nil, fmt.Errorf("reading community directory: %w", err)
+		return nil, err
+	}
+	if limit > 0 && len(topics) > limit {
+		topics = topics[:limit]
+	}
+	return topics, nil
+}
+
+func LoadTopics(dir string) ([]Topic, error) {
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return nil, fmt.Errorf("resolving community directory: %w", err)
 	}
 
 	var topics []Topic
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), ".json") {
-			topic, err := loadTopic(filepath.Join(dir, file.Name()))
-			if err != nil {
-				continue // Skip corrupted files
-			}
-			topics = append(topics, topic)
+	if err := filepath.WalkDir(absDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
 		}
+		if d.IsDir() {
+			return nil
+		}
+		if !strings.HasSuffix(strings.ToLower(d.Name()), ".json") {
+			return nil
+		}
+		topic, err := loadTopic(path)
+		if err != nil {
+			return nil // skip corrupted files silently
+		}
+		if rel, relErr := filepath.Rel(absDir, path); relErr == nil {
+			topic.Filename = rel
+		}
+		topics = append(topics, topic)
+		return nil
+	}); err != nil {
+		if os.IsNotExist(err) {
+			return []Topic{}, nil
+		}
+		return nil, fmt.Errorf("walking community directory: %w", err)
 	}
 
-	// Sort by timestamp (newest first)
 	sort.Slice(topics, func(i, j int) bool {
 		return topics[i].Timestamp > topics[j].Timestamp
 	})
-
-	if len(topics) > limit {
-		topics = topics[:limit]
-	}
 
 	return topics, nil
 }
 
 // SaveTopic saves a topic to the community directory
 func SaveTopic(topic Topic, dir string) error {
-	// Create directory if it doesn't exist
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return fmt.Errorf("creating community directory: %w", err)
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return fmt.Errorf("resolving community directory: %w", err)
 	}
 
-	// Generate filename from title (simplified)
-	filename := strings.ReplaceAll(strings.ToLower(topic.Title), " ", "_")
-	filename = strings.ReplaceAll(filename, "'", "")
-	filename = fmt.Sprintf("%s.json", filename[:min(50, len(filename))])
+	var path string
+	if topic.Filename != "" {
+		path = topic.Filename
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(absDir, path)
+		}
+	} else {
+		// Create directory if it doesn't exist
+		if err := os.MkdirAll(absDir, 0755); err != nil {
+			return fmt.Errorf("creating community directory: %w", err)
+		}
 
-	path := filepath.Join(dir, filename)
+		// Generate filename from title (simplified)
+		filename := strings.ReplaceAll(strings.ToLower(topic.Title), " ", "_")
+		filename = strings.ReplaceAll(filename, "'", "")
+		filename = fmt.Sprintf("%s.json", filename[:min(50, len(filename))])
+
+		path = filepath.Join(absDir, filename)
+	}
+
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return fmt.Errorf("creating topic directory: %w", err)
+	}
 
 	data, err := json.MarshalIndent(topic, "", "  ")
 	if err != nil {
@@ -103,33 +144,51 @@ func SaveTopic(topic Topic, dir string) error {
 		return fmt.Errorf("renaming temp file: %w", err)
 	}
 
+	if rel, relErr := filepath.Rel(absDir, path); relErr == nil {
+		topic.Filename = rel
+	} else {
+		topic.Filename = path
+	}
+
 	return nil
 }
 
 // AddReplyToTopic adds a reply to an existing topic
 func AddReplyToTopic(topicTitle string, reply Reply, dir string) error {
-	// Find topic file (simplified - in production would use better indexing)
-	files, err := os.ReadDir(dir)
+	topics, err := LoadTopics(dir)
 	if err != nil {
-		return fmt.Errorf("reading community directory: %w", err)
+		return err
 	}
 
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), ".json") {
-			path := filepath.Join(dir, file.Name())
-			topic, err := loadTopic(path)
-			if err != nil {
-				continue
-			}
-
-			if topic.Title == topicTitle {
-				topic.Replies = append(topic.Replies, reply)
-				return SaveTopic(topic, dir)
-			}
+	for _, topic := range topics {
+		if topic.Title == topicTitle {
+			topic.Replies = append(topic.Replies, reply)
+			return SaveTopic(topic, dir)
 		}
 	}
 
 	return fmt.Errorf("topic not found: %s", topicTitle)
+}
+
+func LoadTopicByRelativePath(dir, relPath string) (Topic, error) {
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return Topic{}, fmt.Errorf("resolving community directory: %w", err)
+	}
+
+	clean := filepath.Clean(relPath)
+	if strings.HasPrefix(clean, "..") {
+		return Topic{}, fmt.Errorf("invalid topic path: %s", relPath)
+	}
+	path := filepath.Join(absDir, clean)
+	topic, err := loadTopic(path)
+	if err != nil {
+		return Topic{}, err
+	}
+	if rel, relErr := filepath.Rel(absDir, path); relErr == nil {
+		topic.Filename = rel
+	}
+	return topic, nil
 }
 
 // InitializeIfEmpty initializes the community with seed topics if empty
@@ -192,6 +251,7 @@ func loadTopic(path string) (Topic, error) {
 	if err := decoder.Decode(&topic); err != nil {
 		return Topic{}, fmt.Errorf("decoding topic JSON: %w", err)
 	}
+	topic.Filename = path
 
 	return topic, nil
 }
