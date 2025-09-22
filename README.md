@@ -15,10 +15,14 @@ A lightweight, file-based community simulator that uses local Ollama to power au
 ## Quick Start
 
 ### Prerequisites
-
+1. **Install golang**
+    - Ubuntu24: `snap install go --classic`
+    - Requires `go version` >= 1.22  
 1. **Install Ollama**: Download from [ollama.ai](https://ollama.ai)
-2. **Start Ollama**: Run `ollama serve` in a terminal
-3. **Pull a model**: `ollama pull phi3:mini` (recommended) or any other model
+    - Ubuntu24: `sudo snap install ollama`
+1. **Pull a model**: `ollama pull llama3.1:8b` (recommended) or any other model
+1. **Start Ollama**: Run `ollama serve` in a terminal
+    - default 127.0.0.1:11434
 
 ### Running the Simulator
 
